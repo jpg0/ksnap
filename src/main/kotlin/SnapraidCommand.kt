@@ -1,5 +1,4 @@
 import java.io.File
-import java.io.OutputStream
 import java.io.Reader
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -7,15 +6,15 @@ import java.util.concurrent.TimeoutException
 class SnapraidCommand(private val binary: File, private val conf: File) {
 
     fun defaultParams() = listOf<String>(
-        "-conf", conf.absolutePath
+        "-c", conf.absolutePath
     )
 
     private fun <T> run(op: SnapraidOp, params: List<String>, callback: (Reader, Int) -> T): T {
 
         val cmdline = listOf(binary.absolutePath) + defaultParams() + op.name + params
 
-        logger().debug("Running ${cmdline.joinToString()}")
-        
+        logger().debug("Running ${cmdline.joinToString(" ")}")
+
         val proc = ProcessBuilder(cmdline)
             //.directory("/")
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
