@@ -43,7 +43,7 @@ dependencies {
 
     implementation(group="org.slf4j", name="slf4j-api", version="1.7.+")
     runtimeOnly("org.slf4j:slf4j-simple:2.0.3")
-    
+
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.0.2")
 
 }
@@ -53,7 +53,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 application {

@@ -1,21 +1,31 @@
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.prompt
 import com.github.ajalt.clikt.parameters.options.required
-import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
-import com.github.ajalt.clikt.parameters.types.int
+import com.sksamuel.hoplite.ConfigLoaderBuilder
+import com.sksamuel.hoplite.addFileSource
+import com.sksamuel.hoplite.addResourceSource
+import java.io.File
+
+data class KSnapConf(
+    val snapraidConf: File,
+    val snapraidBinary: File,
+    val logLevel: String
+)
 
 class KSnapMain : CliktCommand() {
-    val snapraidConf by option(help="snapraid config file").file(canBeDir = false).required()
-    val snapraidBinary by option(help="snapraid binary executable").file(canBeDir = false).required()
-    val logLevel by option(help="logging level by name").choice("md5", "sha1")
+
+    val config by option(help = "ksnap config file").file(canBeDir = false).required()
 
     override fun run() {
-        val cmd = SnapraidCommand(snapraidBinary, snapraidConf)
+        val config = ConfigLoaderBuilder.default()
+            .addFileSource(config.absolutePath)
+            .build()
+            .loadConfigOrThrow<KSnapConf>()
 
-        logger().info(cmd.sync())
+        val cmd = SnapraidCommand(config.snapraidBinary, config.snapraidConf)
+
+        logger().info(cmd.diff().added().toString())
     }
 }
 

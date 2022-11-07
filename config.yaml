@@ -1,1 +1,3 @@
+snapraid-binary: /usr/sbin/snapraid
 snapraid-conf: /etc/snapraid.conf
+log-level: INFO
