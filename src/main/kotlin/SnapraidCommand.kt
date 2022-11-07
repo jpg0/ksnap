@@ -1,5 +1,6 @@
 import java.io.File
 import java.io.Reader
+import java.rmi.UnexpectedException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -23,6 +24,13 @@ class SnapraidCommand(private val binary: File, private val conf: File) {
 
         if (!proc.waitFor(60, TimeUnit.MINUTES)) {
             throw TimeoutException("Snapraid has not returned after timeout")
+        }
+
+        if(proc.exitValue() == 1) {
+            logger().warn("Snapraid command returned non-zero (1) exit code!")
+            logger().warn(proc.inputStream.bufferedReader().readLines().joinToString(separator = "\n"))
+            
+            throw UnexpectedException("Snapraid command failed")
         }
 
         return callback(proc.inputStream.bufferedReader(), proc.exitValue())
