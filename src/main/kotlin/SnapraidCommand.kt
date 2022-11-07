@@ -11,7 +11,12 @@ class SnapraidCommand(private val binary: File, private val conf: File) {
     )
 
     private fun <T> run(op: SnapraidOp, params: List<String>, callback: (Reader, Int) -> T): T {
-        val proc = ProcessBuilder(listOf(binary.absolutePath) + defaultParams() + op.name + params)
+
+        val cmdline = listOf(binary.absolutePath) + defaultParams() + op.name + params
+
+        logger().debug("Running ${cmdline.joinToString()}")
+        
+        val proc = ProcessBuilder(cmdline)
             //.directory("/")
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
