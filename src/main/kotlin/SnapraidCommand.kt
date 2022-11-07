@@ -36,8 +36,15 @@ class DiffResult(reader: Reader) {
         val map = mutableMapOf(*DiffOp.values().map { it to 0 }.toTypedArray())
 
         for (line in reader.readLines()) {
+
+            logger().debug("> $line")
+
             if (line.isBlank()) {
-                break;
+                break
+            } else if (
+                line.startsWith("Loading state from") || line.startsWith("Comparing...")
+            ) {
+                continue
             }
 
             val (opName, path) = line.split(' ', limit = 2)
